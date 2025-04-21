@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Card,
   CardContent,
@@ -18,6 +19,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -25,7 +31,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PersonStandingIcon } from "lucide-react";
+import { format } from "date-fns";
+import { CalendarIcon, PersonStandingIcon } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -105,6 +112,9 @@ const SignupPage = () => {
 
   const accountType = form.watch("accountType");
 
+  const dobFromDate = new Date();
+  dobFromDate.setFullYear(dobFromDate.getFullYear() - 120);
+
   return (
     <>
       <PersonStandingIcon size={50} />
@@ -141,7 +151,7 @@ const SignupPage = () => {
                   <FormItem>
                     <FormLabel>Account type</FormLabel>
                     <Select onValueChange={field.onChange}>
-                      <FormControl>
+                      <FormControl className="w-full">
                         <SelectTrigger>
                           <SelectValue placeholder="Select an account type" />
                         </SelectTrigger>
@@ -191,6 +201,45 @@ const SignupPage = () => {
                   />
                 </>
               )}
+              <FormField
+                control={form.control}
+                name="dob"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col pt-2">
+                    <FormLabel>Date of birth</FormLabel>
+                    <FormControl>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className="normal-case flex justify-between pr-1"
+                            >
+                              {!!field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
+                              <CalendarIcon />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent align="start" className="w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            defaultMonth={field.value}
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            fixedWeeks
+                            weekStartsOn={1}
+                            fromDate={dobFromDate}
+                            toDate={new Date()}
+                            captionLayout="dropdown-buttons"
+                            
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <Button type="submit">Sign Up</Button>
             </form>
           </Form>
@@ -207,3 +256,5 @@ const SignupPage = () => {
 };
 
 export default SignupPage;
+
+
