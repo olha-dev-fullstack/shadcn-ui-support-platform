@@ -98,8 +98,7 @@ export default function EmployeesStats() {
           </CardTitle>
         </CardHeader>
         <CardContent className="pl-0">
-          {/* <WorkLocationTrends /> */}
-          test
+          <WorkLocationTrends />
         </CardContent>
       </Card>
     </>
